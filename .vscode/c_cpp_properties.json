@@ -6,7 +6,6 @@
                 "limitSymbolsToIncludedHeaders": false
             },
             "includePath": [
-                "/home/angel/inbiodroid_ws/install/neoma_interfaces/include/**",
                 "/opt/ros/humble/include/**",
                 "/home/angel/ProgRob_ws/src/cpp_example/include/**",
                 "/home/angel/ProgRob_ws/install/robx7_interfaces/include/**",
