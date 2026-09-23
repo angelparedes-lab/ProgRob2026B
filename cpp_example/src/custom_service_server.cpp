@@ -8,7 +8,7 @@ class ServiceServerCpp : public rclcpp::Node
 {
   private:
     rclcpp::Service<robx7_interfaces::srv::SumarDosFlotantes>::SharedPtr server_;
-    void callbackAddTwoInts(const robx7_interfaces::srv::SumarDosFlotantes::Request::SharedPtr request,
+    void callbackAddTwoFloats(const robx7_interfaces::srv::SumarDosFlotantes::Request::SharedPtr request,
                             const robx7_interfaces::srv::SumarDosFlotantes::Response::SharedPtr response)
     {
         response->suma = request->a + request->b;
@@ -17,10 +17,10 @@ class ServiceServerCpp : public rclcpp::Node
     }
   
   public:
-    ServiceServerCpp() : Node("add_two_ints_server")
+    ServiceServerCpp() : Node("add_two_floats_server")
     {
-        server_ = this->create_service<robx7_interfaces::srv::SumarDosFlotantes>("add_two_ints",
-            std::bind(&ServiceServerCpp::callbackAddTwoInts, this,_1,_2));
+        server_ = this->create_service<robx7_interfaces::srv::SumarDosFlotantes>("add_two_floats",
+            std::bind(&ServiceServerCpp::callbackAddTwoFloats, this,_1,_2));
       
     }
 

@@ -6,18 +6,17 @@ class ServiceClientCpp : public rclcpp::Node
   private:
     std::vector<std::thread> threads_;
   public:
-    ServiceClientCpp() : Node("add_two_ints_client")
+    ServiceClientCpp() : Node("add_two_floats_client")
     {
-        threads_.push_back(std::thread(&ServiceClientCpp::callAddTwoIntsService, this, 1, 2.1));
-        threads_.push_back(std::thread(&ServiceClientCpp::callAddTwoIntsService, this, 3, 4.1));
-        threads_.push_back(std::thread(&ServiceClientCpp::callAddTwoIntsService, this, 5, 6.1));
-        threads_.push_back(std::thread(&ServiceClientCpp::callAddTwoIntsService, this, 7, 8));
-
+        threads_.push_back(std::thread(&ServiceClientCpp::callAddTwoFloatsService, this, 1.1, 2.2));
+        threads_.push_back(std::thread(&ServiceClientCpp::callAddTwoFloatsService, this, 3.3, 4.4));
+        threads_.push_back(std::thread(&ServiceClientCpp::callAddTwoFloatsService, this, 5.5, 6.6));
+        threads_.push_back(std::thread(&ServiceClientCpp::callAddTwoFloatsService, this, 7.7, 8.8));
     }
 
-    void callAddTwoIntsService(int a, int b)
+    void callAddTwoFloatsService(float a, float b)
     {
-        auto client = this->create_client<robx7_interfaces::srv::SumarDosFlotantes>("add_two_ints");
+        auto client = this->create_client<robx7_interfaces::srv::SumarDosFlotantes>("add_two_floats");
         while (!client->wait_for_service(std::chrono::seconds(1)))
         {
             RCLCPP_WARN(this->get_logger(), "Esperando al servidor");
