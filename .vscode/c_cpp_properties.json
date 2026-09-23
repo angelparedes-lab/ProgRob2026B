@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db",
+                "limitSymbolsToIncludedHeaders": false
+            },
+            "includePath": [
+                "/home/angel/inbiodroid_ws/install/neoma_interfaces/include/**",
+                "/opt/ros/humble/include/**",
+                "/home/angel/ProgRob_ws/src/cpp_example/include/**",
+                "/home/angel/ProgRob_ws/install/robx7_interfaces/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ros2",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}
