@@ -42,6 +42,9 @@ ament_target_dependencies(custom_client_cpp rclcpp robx7_interfaces)
 add_executable(client2_cpp src/example_client.cpp)
 ament_target_dependencies(client2_cpp rclcpp example_interfaces)
 
+add_executable(number_publisher_cpp src/number_publisher.cpp)
+ament_target_dependencies(number_publisher_cpp rclcpp std_msgs)
+
 install(TARGETS
   test_node_cpp
   example_publisher_cpp
@@ -50,8 +53,10 @@ install(TARGETS
   custom_subscriber_cpp
   server_cpp
   client_cpp
+  client2_cpp
   custom_client_cpp
   custom_server_cpp
+  number_publisher_cpp
   DESTINATION lib/${PROJECT_NAME}
 )
 

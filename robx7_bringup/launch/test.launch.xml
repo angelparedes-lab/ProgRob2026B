@@ -1,0 +1,6 @@
+<launch>
+    <node pkg="cpp_example" exec="custom_subscriber_cpp" name="custom_subscriber"/>
+    <node pkg="cpp_example" exec="custom_publisher_cpp" name="custom_publisher"/>
+    <node pkg="cpp_example" exec="custom_server_cpp" name="custom_server"/>
+    <node pkg="cpp_example" exec="custom_client_cpp" name="custom_client"/>
+</launch>
