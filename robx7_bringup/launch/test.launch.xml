@@ -3,4 +3,8 @@
     <node pkg="cpp_example" exec="custom_publisher_cpp" name="custom_publisher"/>
     <node pkg="cpp_example" exec="custom_server_cpp" name="custom_server"/>
     <node pkg="cpp_example" exec="custom_client_cpp" name="custom_client"/>
+    <node pkg="cpp_example" exec="number_publisher" name="number_publisher">
+        <param name="number" value="10"/>
+        <param name="timer_period" value="0.5"/>
+    </node> 
 </launch>
