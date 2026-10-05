@@ -12,7 +12,7 @@
     
      <link name="first_link">
         <visual>
-            <origin xyz="0.0 0.0 0.1" rpy="0.0 0.0 0.0"/>
+            <origin xyz="0.1 0.0 0.0" rpy="0.0 1.5708 0.0"/>
             <geometry>  
                 <cylinder radius="0.05" length="0.2"/>
             </geometry>
@@ -32,15 +32,15 @@
     <joint name="base_first_joint" type="revolute">
         <parent link="base_link"/>
         <child link="first_link"/>
-        <origin xyz = "0.0 0.0 0.1" rpy = "0.0 0.0 0.0"/>
-        <axis xyz="0 1 0"/>
+        <origin xyz = "0.0 0.0 0.1" rpy = "-1.5708 -1.5708 0.0"/>
+        <axis xyz="0 0 1"/>
         <limit lower="-1" upper="1" effort="1" velocity="1"/>
     </joint>
 
     <joint name="first_second_joint" type="fixed">
         <parent link="first_link"/>
         <child link="second_link"/>
-        <origin xyz = "0.0 0.0 0.3" rpy = "0.0 0.0 0.0"/>
+        <origin xyz = "0.3 0.0 0.0" rpy = "1.5708 0.0 1.5708"/>
     </joint>
 
 </robot>

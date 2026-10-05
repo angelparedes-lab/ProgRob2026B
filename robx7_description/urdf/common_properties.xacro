@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="PI" value="3.14159265"/>
+    <xacro:property name="effort" value="1"/>
+    <xacro:property name="velocity" value="1"/>
+    
+    <material name="blue">
+        <color rgba="0 0 1 1"/>
+    </material>
+
+    <material name="gray">
+        <color rgba="0.5 0.5 0.5 1"/>
+    </material>
+
+ 
+</robot>

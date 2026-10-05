@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    
+    
+    <xacro:property name="base_link_length" value="0.3"/>
+    <xacro:property name="base_link_width" value="0.3"/>
+    <xacro:property name="base_link_height" value="0.1"/>
+    <xacro:property name="firts_link_length" value="0.1"/>
+    <xacro:property name="firts_link_radius" value="0.05"/>
+    <xacro:property name="second_link_length" value="0.4"/>
+    <xacro:property name="second_link_radius" value="0.05"/>
+    <xacro:property name="third_link_length" value="0.3"/>
+    <xacro:property name="third_link_radius" value="0.05"/>
+
+    
+
+    <link name="base_link">
+        <visual>
+            <origin xyz="0.0 0.0 ${base_link_height/2}" rpy="0.0 0.0 0.0"/>
+            <geometry>  
+                <box size="${base_link_length} ${base_link_width} ${base_link_height}"/>
+            </geometry>
+            <material name="gray"/>
+        </visual>
+    </link> 
+    
+     <link name="first_link">
+        <visual>
+            <origin xyz="0.0 0.0 ${firts_link_length/2}" rpy="0.0 0.0 0.0"/>
+            <geometry>  
+                <cylinder radius="${firts_link_radius}" length="${firts_link_length}"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+    </link> 
+
+    <link name="second_link">
+        <visual>
+            <origin xyz="${second_link_length/2} 0.0 0.0" rpy="0.0 ${PI/2} 0.0"/>
+            <geometry>  
+                <cylinder radius="${second_link_radius}" length="${second_link_length}"/>
+            </geometry>
+            <material name="gray"/>
+        </visual> 
+    </link>
+
+
+    <link name="third_link">
+        <visual>
+            <origin xyz="${third_link_length/2} 0.0 0.0" rpy="0.0 ${PI/2} 0.0"/>
+            <geometry>  
+                <cylinder radius="${third_link_radius}" length="${third_link_length}"/>
+            </geometry>
+            <material name="blue"/>
+        </visual> 
+    </link>
+
+    <joint name="base_first_joint" type="revolute">
+        <parent link="base_link"/>
+        <child link="first_link"/>
+        <origin xyz = "0.0 0.0 ${base_link_height}" rpy = "0.0 0.0 0.0"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-${PI}" upper="${PI}" effort="${effort}" velocity="${velocity}"/>
+    </joint>
+
+    <joint name="first_second_joint" type="revolute">
+        <parent link="first_link"/>
+        <child link="second_link"/>
+        <origin xyz = "0.0 0.0 ${firts_link_length}" rpy = "-${PI/2} -${PI/2} 0.0"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-${PI/2}" upper="${PI/2}" effort="${effort}" velocity="${velocity}"/>
+    </joint>
+
+    <joint name="second_third_joint" type="revolute">
+        <parent link="second_link"/>
+        <child link="third_link"/>
+        <origin xyz = "${second_link_length} 0.0 0.0" rpy = "0 0 0.0"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-${PI/2}" upper="${PI/2}" effort="${effort}" velocity="${velocity}"/>
+    </joint>
+
+</robot>
