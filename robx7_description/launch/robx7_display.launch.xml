@@ -1,0 +1,14 @@
+<launch>
+    <let name="urdf_path" value="$(find-pkg-share robx7_description)/urdf/robx7.urdf.xacro"/>
+    <let name="rviz_config_path" value="$(find-pkg-share robx7_description)/rviz/robx7_config.rviz"/>
+
+    <node pkg="robot_state_publisher" exec="robot_state_publisher" name="robot_state_publisher">
+        <param name="robot_description" value="$(command 'xacro $(var urdf_path)')"/>
+    </node>
+
+    <node pkg="joint_state_publisher_gui" exec="joint_state_publisher_gui" name="joint_state_publisher_gui">
+        <param name="robot_description" value="$(command 'xacro $(var urdf_path)')"/>
+    </node>
+
+    <node pkg="rviz2" exec="rviz2" name="rviz" args="-d $(var rviz_config_path)"/>
+</launch>
