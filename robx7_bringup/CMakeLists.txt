@@ -7,6 +7,7 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(robx7_description REQUIRED)
 install(DIRECTORY
   launch
   DESTINATION share/${PROJECT_NAME}
