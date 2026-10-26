@@ -4,7 +4,7 @@
     <xacro:property name="base_link_length" value="0.3"/>
     <xacro:property name="base_link_width" value="0.3"/>
     <xacro:property name="base_link_height" value="0.1"/>
-
+    <xacro:property name="base_link_mass" value="0.1"/>
 
     <xacro:property name="firts_link_length" value="0.1"/>
     <xacro:property name="firts_link_radius" value="0.05"/>
@@ -13,12 +13,15 @@
     <xacro:property name="second_link_length" value="0.4"/>
     <xacro:property name="second_link_radius" value="0.05"/>
     <xacro:property name="second_link_mass" value="1.0"/>
-    
+    <xacro:property name="second_link_rpy" value="0.0 ${PI/2} 0.0"/>
     
     <xacro:property name="third_link_length" value="0.3"/>
     <xacro:property name="third_link_radius" value="0.05"/>
     <xacro:property name="third_link_mass" value="1.0"/>
+    <xacro:property name="third_link_rpy" value="0.0 ${PI/2} 0.0"/>
 
+
+    <link name="world"/>
 
     <link name="base_link">
         <visual>
@@ -28,11 +31,11 @@
             </geometry>
             <material name="gray"/>
         </visual>
-        <xacro:macro name="box_inertia" params="${base_link_mass} ${base_link_length} ${base_link_width} ${base_link_height}"/>
+        <xacro:box_inertia m="${base_link_mass}" x="${base_link_length}" y="${base_link_width}" z="${base_link_height}" o_xyz="0.0 0.0 ${base_link_height/2}" o_rpy="0.0 0.0 0.0"/>
         <collision>
             <origin xyz="0.0 0.0 ${base_link_height/2}" rpy="0.0 0.0 0.0"/>
             <geometry>
-                <box size="${base_link_length*0.8} ${base_link_width*0.8} ${base_link_height*0.8}"/>
+                <box size="${base_link_length} ${base_link_width} ${base_link_height}"/>
             </geometry>
         </collision>
     </link> 
@@ -45,7 +48,7 @@
             </geometry>
             <material name="blue"/>
         </visual>
-        <xacro:macro name="cylinder_inertia" params="${first_link_mass} ${firts_link_radius} ${firts_link_length}"/>
+        <xacro:cylinder_inertia m="${first_link_mass}" r="${firts_link_radius}" l="${firts_link_length}" o_xyz="0.0 0.0 ${firts_link_length/2}" o_rpy="0.0 0.0 0.0"/>
         <collision>
             <origin xyz="0.0 0.0 ${firts_link_length/2}" rpy="0.0 0.0 0.0"/>
             <geometry>
@@ -56,15 +59,15 @@
 
     <link name="second_link">
         <visual>
-            <origin xyz="${second_link_length/2} 0.0 0.0" rpy="0.0 ${PI/2} 0.0"/>
+            <origin xyz="${second_link_length/2} 0.0 0.0" rpy="${second_link_rpy}"/>
             <geometry>  
                 <cylinder radius="${second_link_radius}" length="${second_link_length}"/>
             </geometry>
             <material name="gray"/>
         </visual> 
-        <xacro:macro name="cylinder_inertia" params="${second_link_mass} ${second_link_radius} ${second_link_length}"/>
+        <xacro:cylinder_inertia m="${second_link_mass}" r="${second_link_radius}" l="${second_link_length}" o_xyz="${second_link_length/2} 0.0 0.0" o_rpy="${second_link_rpy}"/>
         <collision>
-            <origin xyz="${second_link_length/2} 0.0 0.0" rpy="0.0 ${PI/2} 0.0"/>
+            <origin xyz="${second_link_length/2} 0.0 0.0" rpy="${second_link_rpy}"/>
             <geometry>
                 <cylinder radius="${second_link_radius}" length="${second_link_length}"/>
             </geometry>
@@ -74,20 +77,26 @@
 
     <link name="third_link">
         <visual>
-            <origin xyz="${third_link_length/2} 0.0 0.0" rpy="0.0 ${PI/2} 0.0"/>
+            <origin xyz="${third_link_length/2} 0.0 0.0" rpy="${third_link_rpy}"/>
             <geometry>  
                 <cylinder radius="${third_link_radius}" length="${third_link_length}"/>
             </geometry>
             <material name="blue"/>
         </visual> 
-        <xacro:macro name="cylinder_inertia" params="${third_link_mass} ${third_link_radius} ${third_link_length}"/>
+        <xacro:cylinder_inertia m="${third_link_mass}" r="${third_link_radius}" l="${third_link_length}" o_xyz="${third_link_length/2} 0.0 0.0" o_rpy="${third_link_rpy}"/>
         <collision>
-            <origin xyz="${third_link_length/2} 0.0 0.0" rpy="0.0 ${PI/2} 0.0"/>
+            <origin xyz="${third_link_length/2} 0.0 0.0" rpy="${third_link_rpy}"/>
             <geometry>
                 <cylinder radius="${third_link_radius}" length="${third_link_length}"/>
             </geometry>
         </collision>
     </link>
+
+    <joint name="world_base_joint" type="fixed">
+        <parent link="world"/>
+        <child link="base_link"/>
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+    </joint>
 
     <joint name="base_first_joint" type="revolute">
         <parent link="base_link"/>
