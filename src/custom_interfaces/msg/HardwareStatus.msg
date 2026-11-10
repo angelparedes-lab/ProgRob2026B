@@ -1,0 +1,3 @@
+int64 temperatura
+bool motores_listos
+string debug_msg
