@@ -13,6 +13,7 @@
         <joint name="base_first_joint"/>
         <joint name="first_second_joint"/>
         <joint name="second_third_joint"/>
+        <link name="gripper_base"/>
     </group>
     <group name="gripper">
         <joint name="gripper_base_finger_left"/>
@@ -26,8 +27,8 @@
     </group_state>
     <group_state name="Home" group="arm">
         <joint name="base_first_joint" value="0"/>
-        <joint name="first_second_joint" value="0"/>
-        <joint name="second_third_joint" value="1.5707"/>
+        <joint name="first_second_joint" value="0.78535"/>
+        <joint name="second_third_joint" value="0.78535"/>
     </group_state>
     <group_state name="Open" group="gripper">
         <joint name="gripper_base_finger_left" value="0"/>
@@ -36,7 +37,7 @@
         <joint name="gripper_base_finger_left" value="0.06"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="Claw" parent_link="third_link" group="gripper" parent_group="arm"/>
+    <end_effector name="Claw" parent_link="gripper_base" group="gripper" parent_group="arm"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="base_link" link2="first_link" reason="Adjacent"/>
     <disable_collisions link1="base_link" link2="gripper_base" reason="Never"/>

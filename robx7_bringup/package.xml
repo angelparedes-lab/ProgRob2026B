@@ -17,6 +17,7 @@
   <exec_depend>controller_manager</exec_depend>
   <build_depend>joint_state_broadcaster</build_depend>
   <build_depend>position_controllers</build_depend>
+  <exec_depend>robx7_vision</exec_depend>
 
 
   <test_depend>ament_lint_auto</test_depend>
