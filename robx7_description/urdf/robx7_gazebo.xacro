@@ -58,5 +58,15 @@
         <parameters>$(find robx7_description)/config/robx7_gazebo_config.yaml</parameters>
       </plugin>
     </gazebo>
+
+    <!-- Friccion alta en los dedos de la pinza para sujetar los objetos -->
+    <gazebo reference="gripper_finger_left">
+      <mu1>4.0</mu1>
+      <mu2>4.0</mu2>
+    </gazebo>
+    <gazebo reference="gripper_finger_right">
+      <mu1>4.0</mu1>
+      <mu2>4.0</mu2>
+    </gazebo>
   </xacro:if>
 </robot>

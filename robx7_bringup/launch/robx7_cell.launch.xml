@@ -1,58 +1,94 @@
 <launch>
-    <!-- Variante de clasificacion color (A) o shape (B) -->
+    <!--
+      Para seguir la logica del programa se recomienda leer este archivo de arriba hacia abajo.
+      Cada nodo o archivo que se menciona aqui tiene una marca LLAMADA A ARCHIVO con su ruta.
+
+      Terminal limpia. Solo object_detector y task_manager escriben en pantalla.
+      El resto de los nodos escribe en archivos de log, en la carpeta ~/.ros/log/latest.
+      Para depurar uno de ellos se cambia su output de log a screen.
+    -->
+
+    <!-- Variante de clasificacion, color para la variante A o shape para la variante B -->
     <arg name="classify_by" default="color"/>
-    <!-- Respaldo si camera_info no llega-->
+    <!-- Metodo de vision, classic usa mascaras HSV y ai usa la red neuronal -->
+    <arg name="classifier" default="classic"/>
+    <!-- Si es true la maquina de estados inicia sola, si es false espera el servicio /task/start -->
+    <arg name="auto_start" default="false"/>
+    <!-- Respaldo si camera_info no llega. Campo de vision en radianes, 0.0 lo desactiva. Usar decimales -->
     <arg name="fallback_hfov" default="0.0"/>
+    <!-- Si es true se lanza camera_viewer de la sesion 1. Publica otra imagen de 640 por 480 y consume recursos -->
+    <arg name="viewer" default="false"/>
 
-    <!-- Celda de trabajo + camara virtual + puente a ROS 2 -->
+    <!-- LLAMADA A ARCHIVO robx7_description/urdf/robx7.urdf.xacro que incluye robot, pinza, camara y gazebo -->
     <let name="urdf_path" value="$(find-pkg-share robx7_description)/urdf/robx7.urdf.xacro"/>
+    <!-- LLAMADA A ARCHIVO robx7_description/rviz/robx7_cell.rviz -->
     <let name="rviz_config_path" value="$(find-pkg-share robx7_description)/rviz/robx7_cell.rviz"/>
+    <!-- LLAMADA A ARCHIVO robx7_description/worlds/robx7_cell.sdf -->
     <let name="world_path" value="$(find-pkg-share robx7_description)/worlds/robx7_cell.sdf"/>
+    <!-- LLAMADA A ARCHIVO robx7_task/config/task.yaml -->
+    <let name="task_params_path" value="$(find-pkg-share robx7_task)/config/task.yaml"/>
 
-    <!-- Gazebo con nuestro mundo (incluye el sistema Sensors, necesario para la camara) -->
+    <!-- Gazebo con el mundo propio. El mundo activa el sistema Sensors que necesita la camara -->
     <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
         <arg name="gz_args" value="-r $(var world_path)"/>
     </include>
 
-    <!-- Puente Gazebo -> ROS 2 reloj, imagen y camera_info -->
-    <node pkg="ros_gz_bridge" exec="parameter_bridge" name="clock_bridge" output="screen"
+    <!-- Puente de Gazebo hacia ROS 2 para el reloj de simulacion -->
+    <node pkg="ros_gz_bridge" exec="parameter_bridge" name="clock_bridge" output="log"
           args="/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock"/>
 
-    <node pkg="ros_gz_bridge" exec="parameter_bridge" name="camera_bridge" output="screen"
-        args="/camera@sensor_msgs/msg/Image[ignition.msgs.Image /camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo">
+    <!-- Puente para la imagen y camera_info. En Gazebo se llaman camera y camera_info.
+         En ROS se exponen como camera/image_raw y camera/camera_info. -->
+    <node pkg="ros_gz_bridge" exec="parameter_bridge" name="camera_bridge" output="log"
+          args="/camera@sensor_msgs/msg/Image[ignition.msgs.Image /camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo">
         <remap from="/camera" to="/camera/image_raw"/>
         <remap from="/camera_info" to="/camera/camera_info"/>
     </node>
 
-    <!-- use_gazebo:=true activa ros2_control (ign_ros2_control) y el sensor de la camara -->
-    <node pkg="robot_state_publisher" exec="robot_state_publisher" name="robot_state_publisher">
+    <!-- Publica el arbol TF del robot a partir del URDF. El argumento use_gazebo activa
+         ros2_control y el sensor de la camara dentro de robx7_description/urdf/robx7_gazebo.xacro -->
+    <node pkg="robot_state_publisher" exec="robot_state_publisher" name="robot_state_publisher" output="log">
         <param name="robot_description" value="$(command 'xacro $(var urdf_path) use_gazebo:=true')"/>
         <param name="use_sim_time" value="true"/>
     </node>
 
-    <node pkg="ros_gz_sim" exec="create" name="spawn_robx7" output="screen"
+    <!-- Crea el robot dentro de Gazebo a partir del tema robot_description -->
+    <node pkg="ros_gz_sim" exec="create" name="spawn_robx7" output="log"
           args="-topic robot_description -name robx7"/>
 
-    <node pkg="controller_manager" exec="spawner" name="joint_state_broadcaster_spawner" output="screen"
+    <!-- Activan los controladores que define robx7_description/config/robx7_gazebo_config.yaml -->
+    <node pkg="controller_manager" exec="spawner" name="joint_state_broadcaster_spawner" output="log"
           args="joint_state_broadcaster --controller-manager /controller_manager --controller-manager-timeout 60.0"/>
-    <node pkg="controller_manager" exec="spawner" name="brazo_position_controller_spawner" output="screen"
+    <node pkg="controller_manager" exec="spawner" name="brazo_position_controller_spawner" output="log"
           args="brazo_position_controller --controller-manager /controller_manager --controller-manager-timeout 60.0"/>
-    <node pkg="controller_manager" exec="spawner" name="gripper_position_controller_spawner" output="screen"
+    <node pkg="controller_manager" exec="spawner" name="gripper_position_controller_spawner" output="log"
           args="gripper_position_controller --controller-manager /controller_manager --controller-manager-timeout 60.0"/>
 
-    <!-- Nodo de vision minimo de la sesion (anota la imagen y reporta FPS/intrinsecos) -->
-    <node pkg="robx7_vision" exec="camera_viewer" name="camera_viewer" output="screen">
+    <!-- LLAMADA A ARCHIVO robx7_vision/robx7_vision/camera_viewer.py -->
+    <node pkg="robx7_vision" exec="camera_viewer" name="camera_viewer" output="log" if="$(var viewer)">
         <param name="use_sim_time" value="true"/>
     </node>
 
-    <!-- Percepcion (color/forma - pose 3D con camera_info + TF2) -->
+    <!-- Percepcion.
+         LLAMADA A ARCHIVO robx7_vision/robx7_vision/object_detector.py
+         Ese archivo a su vez usa detector_core.py y ai_classifier.py -->
     <node pkg="robx7_vision" exec="object_detector" name="object_detector" output="screen">
         <param name="use_sim_time" value="true"/>
         <param name="classify_by" value="$(var classify_by)"/>
+        <param name="classifier" value="$(var classifier)"/>
         <param name="fallback_hfov" value="$(var fallback_hfov)"/>
     </node>
 
-    <node pkg="rviz2" exec="rviz2" name="rviz" args="-d $(var rviz_config_path)" output="screen">
+    <!-- Gestor de tarea con la maquina de estados.
+         LLAMADA A ARCHIVO robx7_task/robx7_task/task_manager.py
+         Ese archivo usa fsm.py y kinematics.py de la misma carpeta.
+         Los parametros se leen primero del archivo task.yaml y luego se aplican los de abajo. -->
+    <node pkg="robx7_task" exec="task_manager" name="task_manager" output="screen">
+        <param from="$(var task_params_path)"/>
+        <param name="auto_start" value="$(var auto_start)"/>
+    </node>
+
+    <node pkg="rviz2" exec="rviz2" name="rviz" args="-d $(var rviz_config_path)" output="log">
         <param name="use_sim_time" value="true"/>
     </node>
 </launch>

@@ -1,19 +1,26 @@
 <?xml version="1.0"?>
 <!--
-  Celda de trabajo robx7 (Sesion 1, Unidad 6.1)
-  Convencion: el origen del mundo de Gazebo coincide con el marco 'world' de ROS
-  (base del robot, a nivel de la superficie de la mesa, z = 0).
+  Celda de trabajo robx7.
 
-  Distribucion (vista superior, x hacia adelante, y a la izquierda):
-     - Zona de entrada : centro (0.70, 0.00), cuadro de 0.30 x 0.30 m
-     - Destinos        : rojo (0.50, 0.50), verde (0.50, -0.50), azul (0.00, 0.70)
-     - Objetos         : cubo rojo, cilindro verde, cubo azul dentro de la zona de entrada
+  LO CARGA robx7_bringup/launch/robx7_cell.launch.xml a traves de gz_args.
+  LO COMPLEMENTA robx7_description/urdf/robx7_camera.xacro, cuyo sensor necesita
+  el sistema Sensors que se activa mas abajo.
+
+  Convencion. El origen del mundo de Gazebo coincide con el marco world de ROS,
+  que es la base del robot a nivel de la superficie de la mesa, z igual a 0.
+
+  Distribucion vista desde arriba, x hacia adelante y y a la izquierda.
+     Zona de entrada, centro en x 0.70 y 0.00, cuadro de 0.30 por 0.30 m.
+     Destinos, rojo en x 0.50 y 0.50, verde en x 0.50 y -0.50, azul en x 0.00 y 0.70.
+     Objetos, cubo rojo, cilindro verde y cubo azul dentro de la zona de entrada.
+     Esas coordenadas deben coincidir con robx7_task/config/task.yaml
+     y con robx7_vision/config/ground_truth.yaml.
 -->
 <sdf version="1.8">
   <world name="robx7_cell">
 
     <physics name="1ms" type="ignored">
-      <max_step_size>0.001</max_step_size>
+      <max_step_size>0.002</max_step_size>
       <real_time_factor>1.0</real_time_factor>
     </physics>
 
@@ -57,7 +64,7 @@
       </link>
     </model>
 
-    <!-- Mesa: superficie en z = -0.001 (1 mm bajo la base del robot) -->
+    <!-- Mesa con la superficie en z igual a menos 0.001, un milimetro bajo la base del robot -->
     <model name="table">
       <static>true</static>
       <link name="link">
@@ -89,7 +96,7 @@
       </link>
     </model>
 
-    <!-- Marcas visuales (sin colision): zona de entrada y destinos -->
+    <!-- Marcas visuales sin colision para la zona de entrada y los destinos -->
     <model name="zones">
       <static>true</static>
       <link name="link">
@@ -116,7 +123,7 @@
       </link>
     </model>
 
-    <!-- Objetos (dinamicos, para poder tomarlos en sesiones posteriores) -->
+    <!-- Objetos dinamicos con friccion alta para que la pinza pueda sujetarlos -->
     <model name="cube_red">
       <pose>0.66 0.08 0.02 0 0 0.3</pose>
       <link name="link">
@@ -124,7 +131,7 @@
           <mass>0.05</mass>
           <inertia><ixx>1.33e-5</ixx><iyy>1.33e-5</iyy><izz>1.33e-5</izz></inertia>
         </inertial>
-        <collision name="collision"><geometry><box><size>0.04 0.04 0.04</size></box></geometry></collision>
+        <collision name="collision"><geometry><box><size>0.04 0.04 0.04</size></box></geometry><surface><friction><ode><mu>2.0</mu><mu2>2.0</mu2></ode></friction></surface></collision>
         <visual name="visual">
           <geometry><box><size>0.04 0.04 0.04</size></box></geometry>
           <material><ambient>0.9 0.05 0.05 1</ambient><diffuse>0.9 0.05 0.05 1</diffuse></material>
@@ -139,7 +146,7 @@
           <mass>0.05</mass>
           <inertia><ixx>1.5e-5</ixx><iyy>1.5e-5</iyy><izz>1.0e-5</izz></inertia>
         </inertial>
-        <collision name="collision"><geometry><cylinder><radius>0.02</radius><length>0.05</length></cylinder></geometry></collision>
+        <collision name="collision"><geometry><cylinder><radius>0.02</radius><length>0.05</length></cylinder></geometry><surface><friction><ode><mu>2.0</mu><mu2>2.0</mu2></ode></friction></surface></collision>
         <visual name="visual">
           <geometry><cylinder><radius>0.02</radius><length>0.05</length></cylinder></geometry>
           <material><ambient>0.05 0.8 0.05 1</ambient><diffuse>0.05 0.8 0.05 1</diffuse></material>
@@ -154,7 +161,7 @@
           <mass>0.05</mass>
           <inertia><ixx>1.33e-5</ixx><iyy>1.33e-5</iyy><izz>1.33e-5</izz></inertia>
         </inertial>
-        <collision name="collision"><geometry><box><size>0.04 0.04 0.04</size></box></geometry></collision>
+        <collision name="collision"><geometry><box><size>0.04 0.04 0.04</size></box></geometry><surface><friction><ode><mu>2.0</mu><mu2>2.0</mu2></ode></friction></surface></collision>
         <visual name="visual">
           <geometry><box><size>0.04 0.04 0.04</size></box></geometry>
           <material><ambient>0.05 0.05 0.9 1</ambient><diffuse>0.05 0.05 0.9 1</diffuse></material>

@@ -1,0 +1,46 @@
+# Parametros del nodo task_manager.
+# LO CARGA el archivo robx7_bringup/launch/robx7_cell.launch.xml con param from.
+# LO LEE robx7_task/robx7_task/task_manager.py en el constructor de TaskManager.
+# La clave task_manager debe coincidir con el name del nodo en el launch.
+task_manager:
+  ros__parameters:
+    use_sim_time: true
+    auto_start: false          # si es true la tarea inicia sola al lanzar
+    max_retries: 2             # reintentos por objeto antes de descartarlo
+    max_recoveries: 10         # tope global de recuperaciones antes de terminar
+
+    # Postura segura. Brazo levantado y pinza al frente, deja libre la vista de la camara.
+    # El codo queda en 1.5 para no apoyarse en su limite de 1.5708.
+    home: [0.0, 0.0, 1.5]
+
+    # Limite de par de las articulaciones del brazo en N.m. Debe coincidir con arm_effort
+    # de robx7_description/urdf/common_properties.xacro. Con check_torque en true el gestor
+    # rechaza las posturas que el brazo no podria sostener, en lugar de dejarlo caer.
+    effort_limit: 100.0
+    check_torque: true
+
+    # Geometria del agarre en metros
+    tool_length: 0.46          # del codo al punto de agarre
+    grasp_height: 0.045        # altura del punto de agarre, cerca de la cara superior del objeto
+    approach_height: 0.12      # altura de la aproximacion vertical
+    carry_height: 0.16         # altura al levantar y al viajar
+    drop_height: 0.13          # altura sobre el destino al soltar
+
+    # Pinza, posicion de cada dedo en metros
+    grip_open: 0.0
+    grip_close: 0.06
+    check_grasp: true          # confirma el agarre revisando la posicion de los dedos
+    grip_empty_threshold: 0.065  # sobre este valor la pinza cerro sin objeto
+
+    # Tiempos. move_time y settle_wait son segundos de simulacion
+    move_time: 2.0
+    settle_wait: 1.0
+    # Espera maxima de detecciones nuevas, en segundos de tiempo real
+    detect_timeout: 10.0
+
+    # Destino por clase, punto x y sobre la mesa. Coinciden con las marcas del mundo SDF.
+    dest_red: [0.50, 0.50]
+    dest_green: [0.50, -0.50]
+    dest_blue: [0.00, 0.70]
+    dest_cube: [0.50, 0.50]
+    dest_cylinder: [0.50, -0.50]

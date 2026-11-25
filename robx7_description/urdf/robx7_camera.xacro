@@ -1,14 +1,21 @@
 <?xml version="1.0"?>
+<!-- Camara virtual fija sobre la mesa, tipo eye to hand.
+     LO INCLUYE robx7_description/urdf/robx7.urdf.xacro.
+     USA los macros de robx7_description/urdf/common_properties.xacro, por ejemplo box_inertia.
+     Marcos. world, camera_link con la convencion de Gazebo y camera_optical_link con la de ROS y OpenCV.
+     La imagen y camera_info salen por el puente definido en robx7_bringup/launch/robx7_cell.launch.xml. -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+    <!-- Posicion de la camara en el marco world, que coincide con la base del robot a nivel de la mesa -->
     <xacro:property name="camera_x" value="0.65"/>
     <xacro:property name="camera_y" value="0.0"/>
     <xacro:property name="camera_z" value="0.8"/>
 
+    <!-- Parametros del sensor. La vision los usa para entender camera_info -->
     <xacro:property name="camera_width_px" value="640"/>
     <xacro:property name="camera_height_px" value="480"/>
     <xacro:property name="camera_hfov" value="1.2"/>   <!-- rad -->
-    <xacro:property name="camera_rate" value="15"/>    <!-- Hz -->
+    <xacro:property name="camera_rate" value="10"/>    <!-- Hz, el detector procesa 5 por segundo -->
 
     <link name="camera_link">
         <visual>
@@ -18,10 +25,13 @@
             <material name="gray"/>
         </visual>
         <xacro:box_inertia m="0.05" x="0.05" y="0.08" z="0.05" o_xyz="0 0 0" o_rpy="0 0 0"/>
+        <!-- Sin collision para que la camara no estorbe al brazo -->
     </link>
 
+    <!-- Marco optico que solo existe en ROS y TF, Gazebo lo ignora al fusionar juntas fijas -->
     <link name="camera_optical_link"/>
 
+    <!-- Con pitch igual a PI medios el eje x de la camara apunta hacia abajo -->
     <joint name="world_camera_joint" type="fixed">
         <parent link="world"/>
         <child link="camera_link"/>
@@ -40,6 +50,7 @@
                 <always_on>true</always_on>
                 <update_rate>${camera_rate}</update_rate>
                 <topic>camera</topic>
+                <!-- Nombre de marco que Gazebo escribe en el encabezado de la imagen -->
                 <ignition_frame_id>camera_optical_link</ignition_frame_id>
                 <camera>
                     <horizontal_fov>${camera_hfov}</horizontal_fov>
